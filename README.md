@@ -10,7 +10,7 @@ It is written in Rust with [pgrx](https://github.com/pgcentralfoundation/pgrx) a
 
 Looking for SQLite? See [sqlite-jinja](https://github.com/thejens/sqlite-jinja), which has the same functions as a loadable SQLite extension.
 
-Want to build dbt-style models from your stored templates? [dbinja](https://github.com/thejens/dbinja) runs `ref`/`source`/`config` SQL models from the `jinja_templates` table, inside the database.
+Want to run a whole dbt project inside the database? [dbtindb](https://github.com/thejens/dbtindb) builds, tests and snapshots dbt models, seeds and snapshots with one SQL call, in PostgreSQL and SQLite, using dbt's own Jinja engine.
 
 ```sql
 SELECT jinja_render(

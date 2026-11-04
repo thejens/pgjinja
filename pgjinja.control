@@ -1,0 +1,6 @@
+comment = 'Jinja2 templates in PostgreSQL, powered by MiniJinja'
+default_version = '@CARGO_VERSION@'
+module_pathname = 'pgjinja'
+relocatable = false
+superuser = true
+trusted = false

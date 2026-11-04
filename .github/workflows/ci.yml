@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  PGRX_VERSION: 0.19.3
+
+jobs:
+  test:
+    name: PostgreSQL ${{ matrix.pg }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        pg: [14, 15, 16, 17, 18]
+    env:
+      PG: ${{ matrix.pg }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: pg${{ matrix.pg }}
+
+      - name: Install PostgreSQL ${{ matrix.pg }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y "postgresql-$PG" "postgresql-server-dev-$PG"
+          PG_CONFIG="/usr/lib/postgresql/$PG/bin/pg_config"
+          # cargo pgrx installs the extension into the system Postgres.
+          sudo chmod a+rwx "$($PG_CONFIG --pkglibdir)" "$($PG_CONFIG --sharedir)/extension"
+
+      - name: Install cargo-pgrx
+        run: cargo install cargo-pgrx --version "$PGRX_VERSION" --locked
+
+      - name: Initialise pgrx
+        run: cargo pgrx init "--pg$PG" "/usr/lib/postgresql/$PG/bin/pg_config"
+
+      - name: Lint
+        if: matrix.pg == 18
+        run: |
+          cargo fmt --check
+          cargo clippy --no-default-features --features "pg$PG" --all-targets -- -D warnings
+
+      - name: Unit tests
+        run: cargo pgrx test "pg$PG"
+
+      - name: Regression tests
+        run: cargo pgrx regress "pg$PG" --resetdb

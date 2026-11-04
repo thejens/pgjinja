@@ -1,0 +1,47 @@
+[package]
+name = "pgjinja"
+version = "0.1.0"
+edition = "2021"
+description = "Jinja2 templates in PostgreSQL: render templates from SQL with row data, query parameters and stored templates, powered by MiniJinja."
+license = "MIT"
+repository = "https://github.com/thejens/pgjinja"
+readme = "README.md"
+keywords = ["postgresql", "jinja2", "template", "pgrx", "minijinja"]
+categories = ["database", "template-engine"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+default = ["pg16"]
+pg13 = ["pgrx/pg13", "pgrx-tests/pg13" ]
+pg14 = ["pgrx/pg14", "pgrx-tests/pg14" ]
+pg15 = ["pgrx/pg15", "pgrx-tests/pg15" ]
+pg16 = ["pgrx/pg16", "pgrx-tests/pg16" ]
+pg17 = ["pgrx/pg17", "pgrx-tests/pg17" ]
+pg18 = ["pgrx/pg18", "pgrx-tests/pg18" ]
+pg19 = ["pgrx/pg19", "pgrx-tests/pg19" ]
+pg_test = []
+
+[dependencies]
+lru = "0.19.0"
+minijinja = { version = "3.0.5", features = ["json", "fuel", "loop_controls", "urlencode", "unicode", "preserve_order", "serde"] }
+minijinja-contrib = { version = "3.0.5", features = ["datetime", "pycompat"] }
+pgrx = "=0.19.3"
+serde_json = "1.0.154"
+
+[dev-dependencies]
+[dev-dependencies.pgrx-tests]
+version = "=0.19.3"
+
+[profile.dev]
+panic = "unwind"
+
+[profile.release]
+panic = "unwind"
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+# rustc strips release debuginfo by default; on macOS 27 / ld-27037 the stripped
+# dylib is rejected by dyld ("mis-aligned LINKEDIT string pool").
+strip = false

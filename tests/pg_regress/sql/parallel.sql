@@ -1,11 +1,12 @@
 -- Renders must work inside parallel workers. Stored templates are loaded via
 -- SPI, which has to stay read-only there. This lives in pg_regress rather
 -- than #[pg_test] because pgrx tests run inside a function, where Postgres
--- never plans parallel queries.
+-- never plans parallel queries. Parallelism is forced through the cost
+-- settings, which exist on every supported version (debug_parallel_query
+-- only exists from PostgreSQL 16).
 INSERT INTO jinja_templates VALUES ('n', '{{ i }}');
 CREATE TABLE nums AS SELECT generate_series(1, 10000) AS i;
 ANALYZE nums;
-SET debug_parallel_query = on;
 SET parallel_setup_cost = 0;
 SET parallel_tuple_cost = 0;
 SET min_parallel_table_scan_size = 0;

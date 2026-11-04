@@ -8,6 +8,8 @@
 Generate emails, HTML, Markdown, JSON, prompts or reports from table rows and query parameters, without leaving the database.
 It is written in Rust with [pgrx](https://github.com/pgcentralfoundation/pgrx) and uses [MiniJinja](https://github.com/mitsuhiko/minijinja), the Jinja2-compatible template engine by the creator of Jinja2.
 
+Looking for SQLite? See [sqlite-jinja](https://github.com/thejens/sqlite-jinja), which has the same functions as a loadable SQLite extension.
+
 ```sql
 SELECT jinja_render(
   'Hi {{ name }}, you have {{ n }} new {{ "message" if n == 1 else "messages" }}',
@@ -251,6 +253,10 @@ Measured on an Apple M-series laptop with PostgreSQL 16, release build, 200,000 
 Building `jsonb` is a large part of the cost. Passing only the fields a template needs with `jsonb_build_object` is the cheapest option. Parallel query spreads rendering across workers.
 
 ## FAQ
+
+### Is there a SQLite version?
+
+Yes: [sqlite-jinja](https://github.com/thejens/sqlite-jinja), with the same functions and template behaviour. It is a loadable extension for the `sqlite3` CLI, Python, Node.js, Datasette and Rust.
 
 ### How do I render a Jinja2 template in PostgreSQL?
 

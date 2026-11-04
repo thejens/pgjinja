@@ -10,6 +10,8 @@ It is written in Rust with [pgrx](https://github.com/pgcentralfoundation/pgrx) a
 
 Looking for SQLite? See [sqlite-jinja](https://github.com/thejens/sqlite-jinja), which has the same functions as a loadable SQLite extension.
 
+Want to build dbt-style models from your stored templates? [dbinja](https://github.com/thejens/dbinja) runs `ref`/`source`/`config` SQL models from the `jinja_templates` table, inside the database.
+
 ```sql
 SELECT jinja_render(
   'Hi {{ name }}, you have {{ n }} new {{ "message" if n == 1 else "messages" }}',
